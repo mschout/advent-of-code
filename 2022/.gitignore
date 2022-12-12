@@ -6,3 +6,4 @@ build
 
 .idea/
 src/main/resources/puzzle-input/
+src/main/resources/puzzle-solutions/

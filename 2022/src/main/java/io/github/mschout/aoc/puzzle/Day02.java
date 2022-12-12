@@ -1,22 +1,20 @@
 package io.github.mschout.aoc.puzzle;
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import io.github.mschout.aoc.AdventOfCodePuzzle;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 import static java.util.Map.entry;
 
 // Part 1 Total Score: 9651
 // Part 2 Total Score: 10560
 
-@Command(name = "day02", description = "Solve Puzzle for Day 2")
-public class Day02 implements Callable<Integer> {
-  @Option(names = "-f")
-  private String file;
+public class Day02 extends AdventOfCodePuzzle {
+  public Day02(Path input) {
+    super(input);
+  }
 
   // Rock=1, paper=2, scissors=3
   // Win=6, lose=0, draw=3
@@ -46,21 +44,20 @@ public class Day02 implements Callable<Integer> {
   );
 
   @Override
-  public Integer call() throws Exception {
-    System.out.println("Day 2");
-
-    var score = Files.lines(Paths.get(file))
+  public String partOne() throws Exception {
+    var score = Files.lines(inputFile)
       .map(line -> partOneOutcomes.get(line))
       .reduce(0, Integer::sum);
 
-    System.out.println("Part 1 Total Score: " + score);
+    return score.toString();
+  }
 
-    score = Files.lines(Paths.get(file))
+  @Override
+  public String partTwo() throws Exception {
+    var score = Files.lines(inputFile)
       .map(line -> partTwoOutcomes.get(line))
       .reduce(0, Integer::sum);
 
-    System.out.println("Part 2 Total Score: " + score);
-
-    return 0;
+    return score.toString();
   }
 }

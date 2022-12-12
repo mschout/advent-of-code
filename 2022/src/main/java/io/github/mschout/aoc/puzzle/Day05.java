@@ -1,64 +1,56 @@
 package io.github.mschout.aoc.puzzle;
 
 import com.google.common.io.Files;
-import io.github.mschout.aoc.App;
+import io.github.mschout.aoc.AdventOfCodePuzzle;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.ParentCommand;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-@Command(name = "day05", description = "Solve Day 5 Puzzle")
 @Slf4j
-public class Day05 implements Callable<Integer> {
+public class Day05 extends AdventOfCodePuzzle {
   private BufferedReader inputReader;
 
-  @ParentCommand
-  private App app;
-
-  @Override
-  public Integer call() throws Exception {
-    part1();
-    part2();
-
-    return 0;
+  public Day05(Path inputFile) {
+    super(inputFile);
   }
 
-  void part1() throws IOException {
+  @Override
+  public String partOne() throws Exception {
     inputReader = openInputFile();
 
     var stacks = parseStacks(inputReader);
-    stacks.dump();
 
     inputReader.lines()
       .filter(s -> s.startsWith("move"))
       .map(CrateMovement::parse)
       .forEach(stacks::move);
 
-    System.out.println("Part 1: " + stacks.getMessage());
-    assert (stacks.getMessage().equals("TWSGQHNHL"));
+    // assert (stacks.getMessage().equals("TWSGQHNHL"));
+
+    return stacks.getMessage();
   }
 
-  void part2() throws IOException {
+  @Override
+  public String partTwo() throws Exception {
     inputReader = openInputFile();
 
     var stacks = parseStacks(inputReader);
-    stacks.dump();
 
     inputReader.lines()
       .filter(s -> s.startsWith("move"))
       .map(CrateMovement::parse)
       .forEach(stacks::movePreservingOrder);
 
-    System.out.println("Part 2: " + stacks.getMessage());
-    assert (stacks.getMessage().equals("JNRSCDWPP"));
+    // assert (stacks.getMessage().equals("JNRSCDWPP"));
+
+    return stacks.getMessage();
   }
 
   private CrateStacks parseStacks(BufferedReader inputReader) throws IOException {
@@ -105,7 +97,7 @@ public class Day05 implements Callable<Integer> {
   }
 
   private BufferedReader openInputFile() throws FileNotFoundException {
-    return Files.newReader(app.getInput(2022, 5).toFile(), StandardCharsets.UTF_8);
+    return Files.newReader(inputFile.toFile(), StandardCharsets.UTF_8);
   }
 
   record CrateMovement(int count, int fromStack, int toStack) {

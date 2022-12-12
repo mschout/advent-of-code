@@ -1,25 +1,23 @@
 package io.github.mschout.aoc.puzzle;
 
 import com.google.common.collect.Lists;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import io.github.mschout.aoc.AdventOfCodePuzzle;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
-@Command(name = "day03", description = "Solve puzzle for day 3")
-public class Day03 implements Callable<Integer> {
-  @Option(names = "-f")
-  private String file;
-
+public class Day03 extends AdventOfCodePuzzle {
   private List<Rucksack> rucksacks = new ArrayList<>();
 
+  public Day03(Path inputFile) {
+    super(inputFile);
+  }
+
   @Override
-  public Integer call() throws Exception {
-    Files.lines(Paths.get(file))
+  public String partOne() throws Exception {
+    Files.lines(inputFile)
       .forEach(line -> rucksacks.add(new Rucksack(line)));
 
     // Part one
@@ -28,9 +26,11 @@ public class Day03 implements Callable<Integer> {
       .map(ch -> itemPriority(ch))
       .reduce(0, Integer::sum);
 
-    System.out.println("Total priority of duplicated items: " + duplicatedSum);
+    return duplicatedSum.toString();
+  }
 
-    // Part Two
+  @Override
+  public String partTwo() throws Exception {
     var groups = Lists.partition(rucksacks, 3);
 
     var groupSum = groups.stream()
@@ -38,9 +38,7 @@ public class Day03 implements Callable<Integer> {
       .map(this::itemPriority)
       .reduce(0, Integer::sum);
 
-    System.out.println("Total Group Sum: " + groupSum);
-
-    return 0;
+    return groupSum.toString();
   }
 
   private Character findCommonItem(List<Rucksack> group) {

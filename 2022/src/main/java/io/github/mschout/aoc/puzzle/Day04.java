@@ -1,44 +1,44 @@
 package io.github.mschout.aoc.puzzle;
 
-import io.github.mschout.aoc.App;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.ParentCommand;
+import io.github.mschout.aoc.AdventOfCodePuzzle;
+import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-@Command(name = "day04", description = "Solve Day 4 Puzzle")
-public class Day04 implements Callable<Integer> {
-  @Option(names = "-f")
-  private String file;
+// TODO: refactor, Apache Commons has a Range type that could shorten this a bit.
+public class Day04 extends AdventOfCodePuzzle {
+  public Day04(Path inputFile) {
+    super(inputFile);
+  }
 
-  @ParentCommand
-  App app;
+  @Getter(lazy = true)
+  private final List<PairAssignment> assignments = buildPairAssignments();
+
+  @SneakyThrows
+  private List<PairAssignment> buildPairAssignments() {
+    return Files.lines(inputFile).map(PairAssignment::fromInput).toList();
+  }
 
   @Override
-  public Integer call() throws Exception {
-    var assignments = Files.lines(Paths.get(file))
-      .map(PairAssignment::fromInput)
-      .toList();
-
-    var containedAssignments = assignments.stream()
+  public String partOne() {
+    var containedAssignments = getAssignments().stream()
       .filter(a -> a.get(0).contains(a.get(1)) || a.get(0).isContainedBy(a.get(1)))
       .toList();
 
-    System.out.println("There are " + containedAssignments.size() + " contained assignments");
+    return "" + containedAssignments.size();
+  }
 
-    var overlappingAssignments = assignments.stream()
+  @Override
+  public String partTwo() {
+    var overlappingAssignments = getAssignments().stream()
       .filter(a -> (a.get(0).overlaps(a.get(1))))
       .toList();
 
-    overlappingAssignments.forEach(a -> System.out.println(a.toString()));
-    System.out.println("There are " + overlappingAssignments.size() + " overlapping assignments");
-
-    return 0;
+    return "" + overlappingAssignments.size();
   }
 
   record PairAssignment(List<SectionRange> ranges) {
@@ -65,7 +65,7 @@ public class Day04 implements Callable<Integer> {
 
   record SectionRange(int startSection, int endSection) {
     public static SectionRange fromInput(String rangeInput) {
-      var bounds = Arrays.stream(rangeInput.split("\\-"))
+      var bounds = Arrays.stream(rangeInput.split("-"))
         .map(Integer::parseInt)
         .toList();
 

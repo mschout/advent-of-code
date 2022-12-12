@@ -1,45 +1,36 @@
 package io.github.mschout.aoc.puzzle;
 
 import com.google.common.collect.EvictingQueue;
-import io.github.mschout.aoc.App;
+import io.github.mschout.aoc.AdventOfCodePuzzle;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.ParentCommand;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
-@Command(name = "day06", description = "Solve Day 6 Puzzle")
 @Slf4j
-public class Day06 implements Callable<Integer> {
-  @ParentCommand
-  private App app;
+public class Day06 extends AdventOfCodePuzzle {
+  public Day06(Path inputFile) {
+    super(inputFile);
+  }
 
   @Override
-  public Integer call() throws Exception {
-    part1();
-
-    part2();
-
-    return null;
-  }
-
-  private void part1() throws IOException {
+  public String partOne() throws Exception {
     var bytesRead = findStartSignal(4);
-    System.out.println("Found start signal after reading " + bytesRead + " bytes");
+    return "" + bytesRead;
   }
 
-  private void part2() throws IOException {
+  @Override
+  public String partTwo() throws Exception {
     var bytesRead = findStartSignal(14);
-    System.out.println("Found start signal after reading " + bytesRead + " bytes");
+    return "" + bytesRead;
   }
 
   private int findStartSignal(int markerLength) throws IOException {
-    var input = Files.newBufferedReader(app.getInput(2022, 6));
+    var input = Files.newBufferedReader(inputFile);
 
     var signalDetector = new SignalStartDetector(markerLength);
 

@@ -25,8 +25,8 @@ public class Day09 extends AdventOfCodePuzzle {
   public String partOne() throws Exception {
     var rope = new Rope(2);
 
-    try (var reader = Files.newBufferedReader(inputFile)) {
-      reader.lines().forEach(line -> rope.moveHead(Move.parse(line)));
+    try (var lines = Files.lines(inputFile)) {
+      lines.forEach(line -> rope.moveHead(Move.parse(line)));
     }
 
     return String.valueOf(rope.getTailVisited().size());
@@ -36,8 +36,8 @@ public class Day09 extends AdventOfCodePuzzle {
   public String partTwo() throws Exception {
     var rope = new Rope(10);
 
-    try (var reader = Files.newBufferedReader(inputFile)) {
-      reader.lines().forEach(line -> rope.moveHead(Move.parse(line)));
+    try (var lines = Files.lines(inputFile)) {
+      lines.forEach(line -> rope.moveHead(Move.parse(line)));
     }
 
     return String.valueOf(rope.getTailVisited().size());

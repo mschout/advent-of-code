@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Table;
 import io.github.mschout.aoc.AdventOfCodePuzzle;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.awt.geom.Point2D;
 import java.nio.file.Files;
@@ -15,7 +14,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
+import static java.lang.Integer.parseInt;
+
 public class Day09 extends AdventOfCodePuzzle {
   public Day09(Path inputFile) {
     super(inputFile);
@@ -26,10 +26,7 @@ public class Day09 extends AdventOfCodePuzzle {
     var rope = new Rope(2);
 
     try (var reader = Files.newBufferedReader(inputFile)) {
-      reader.lines().forEach(line -> {
-        var move = Move.parse(line);
-        rope.moveHead(move);
-      });
+      reader.lines().forEach(line -> rope.moveHead(Move.parse(line)));
     }
 
     return String.valueOf(rope.getTailVisited().size());
@@ -40,16 +37,13 @@ public class Day09 extends AdventOfCodePuzzle {
     var rope = new Rope(10);
 
     try (var reader = Files.newBufferedReader(inputFile)) {
-      reader.lines().forEach(line -> {
-        var move = Move.parse(line);
-        rope.moveHead(move);
-      });
+      reader.lines().forEach(line -> rope.moveHead(Move.parse(line)));
     }
 
     return String.valueOf(rope.getTailVisited().size());
   }
 
-  record Move(@Getter Day09.Move.Direction direction, @Getter int quantity) {
+  record Move(Day09.Move.Direction direction, int quantity) {
     enum Direction {
       UP,
       RIGHT,
@@ -70,11 +64,10 @@ public class Day09 extends AdventOfCodePuzzle {
         default -> throw new IllegalArgumentException("Bad direction input: " + fields[0]);
       };
 
-      return new Move(direction, Integer.parseInt(fields[1]));
+      return new Move(direction, parseInt(fields[1]));
     }
   }
 
-  @Slf4j
   static class Rope {
     private final List<Point2D> rope;
 
@@ -112,10 +105,15 @@ public class Day09 extends AdventOfCodePuzzle {
         for (int knotNum = 0; knotNum < rope.size(); knotNum++) {
           var currentKnot = rope.get(knotNum);
 
-          if (knotNum == 0) // head knot
+          if (knotNum == 0) {
+            // head knot
             moveByOne(currentKnot, move.direction());
-          else // non-head knot
-            moveKnotIfNecessary(currentKnot, rope.get(knotNum - 1));
+          }
+          else {
+            // non-head knot - if no move is needed, we can break out of the inner loop
+            // here because the rest of the knots will also stay in current position.
+            if (!moveKnotIfNecessary(currentKnot, rope.get(knotNum - 1))) break;
+          }
         }
 
         tailVisited.add(getTailLocation());
@@ -143,13 +141,23 @@ public class Day09 extends AdventOfCodePuzzle {
 
     // Move the knot (if needed) so that it is within one square of the knot in front of
     // it
-    void moveKnotIfNecessary(Point2D currentKnot, Point2D nextKnot) {
+
+    /**
+     * Moves the given knot if necessary so that it is within 1 square of the knot in
+     * front of it.
+     * @param currentKnot the knot to move
+     * @param nextKnot the next knot closer to the head of the rope (or the head itself)
+     * @return true if the knot was moved, false otherwise
+     */
+    boolean moveKnotIfNecessary(Point2D currentKnot, Point2D nextKnot) {
       var point = getRequiredKnotMove(currentKnot, nextKnot);
 
       if (!point.equals(origin)) {
         currentKnot.setLocation(currentKnot.getX() + point.getX(), currentKnot.getY() + point.getY());
-        assert currentKnot.distance(nextKnot) < 2.0;
+        return true;
       }
+
+      return false;
     }
 
     /**

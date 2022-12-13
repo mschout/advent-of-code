@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Day03 extends AdventOfCodePuzzle {
-  private List<Rucksack> rucksacks = new ArrayList<>();
+  private final List<Rucksack> rucksacks = new ArrayList<>();
 
   public Day03(Path inputFile) {
     super(inputFile);
@@ -17,13 +17,14 @@ public class Day03 extends AdventOfCodePuzzle {
 
   @Override
   public String partOne() throws Exception {
-    Files.lines(inputFile)
-      .forEach(line -> rucksacks.add(new Rucksack(line)));
+    try (var lines = Files.lines(inputFile)) {
+      lines.forEach(line -> rucksacks.add(new Rucksack(line)));
+    }
 
     // Part one
     var duplicatedSum = rucksacks.stream()
       .flatMap(s -> s.getDuplicatedItems().stream())
-      .map(ch -> itemPriority(ch))
+      .map(this::itemPriority)
       .reduce(0, Integer::sum);
 
     return duplicatedSum.toString();
@@ -34,7 +35,7 @@ public class Day03 extends AdventOfCodePuzzle {
     var groups = Lists.partition(rucksacks, 3);
 
     var groupSum = groups.stream()
-      .map(group -> findCommonItem(group))
+      .map(this::findCommonItem)
       .map(this::itemPriority)
       .reduce(0, Integer::sum);
 
@@ -66,7 +67,7 @@ public class Day03 extends AdventOfCodePuzzle {
       return item - 'a' + 1;
   }
 
-  class Rucksack {
+  static class Rucksack {
     private final List<Compartment> compartments;
 
     Rucksack(String items) {
@@ -120,8 +121,8 @@ public class Day03 extends AdventOfCodePuzzle {
     }
   }
 
-  class Compartment {
-    private List<Character> items = new ArrayList<>();
+  static class Compartment {
+    private final List<Character> items;
 
     Compartment(String items) {
       this.items = Lists.charactersOf(items);

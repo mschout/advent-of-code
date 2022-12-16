@@ -119,7 +119,7 @@ public class Day12 extends AdventOfCodePuzzle {
     }
   }
 
-   static class Grid {
+  static class Grid {
     private final Location[][] locations;
 
     @Getter

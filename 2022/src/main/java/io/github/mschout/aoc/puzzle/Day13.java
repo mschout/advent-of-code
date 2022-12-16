@@ -15,7 +15,6 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class Day13 extends AdventOfCodePuzzle {
-  private JsonParser parser = new JsonParser();
   private final List<Pair<List<Object>, List<Object>>> packetPairs;
 
   public Day13(Path inputFile) throws IOException {
@@ -44,7 +43,6 @@ public class Day13 extends AdventOfCodePuzzle {
 
     for (int i = 0; i < packetPairs.size(); i++) {
       var pair = packetPairs.get(i);
-
       if (compare(pair.getLeft(), pair.getRight()) <= 0)
         correctIndexes.add(i + 1);
     }
@@ -94,7 +92,6 @@ public class Day13 extends AdventOfCodePuzzle {
   }
 
   private int compare(Object left, Object right) {
-
     if (left instanceof Integer leftInt && right instanceof Integer rightInt)
       return leftInt - rightInt;
 
